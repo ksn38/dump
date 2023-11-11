@@ -36,4 +36,5 @@ for i in unfollow:
         print('-', i)
 
 for i in follow:
-    print('+', i)
+	if i != "anaselgarhy":
+		print('+', i)
