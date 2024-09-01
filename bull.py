@@ -22,19 +22,24 @@ indexes = ['Ветлуга', 'Шахунья', 'Красные Баки', 'Во�
 
 bull = pd.DataFrame(columns=["t max","t min","t ср", "ос день", "ос ночь", "ветер д", "ветер н", "t почвы", "t 2cm"], index=indexes)
 
+def replace_sign(t):
+    t = re.sub('^00|^0', '+' ,t)
+    t = re.sub('^10|^1', '-' ,t)
+    return t
+
 for i in telegrams:
     if len(i) > 2:
         i = re.sub('^\s+', '' ,i)
         index = re.findall('^\w+\s\w+\s\(\w+\)|^\w+\s\w+|^\w+', i)
         t_max = re.findall('333\s1\w{,4}', i)
         if len(t_max) > 0:
-            bull.at[index, "t max"] = t_max[0][-4:]
+            bull.at[index, "t max"] = replace_sign(t_max[0][-4:])
         t_min = re.findall('333\s2\w{,4}', i)
         if len(t_min) > 0:
-            bull.at[index, "t min"] = t_min[0][-4:]
+            bull.at[index, "t min"] = replace_sign(t_min[0][-4:])
         t_med = re.findall('555\s50\w{,4}|555\s51\w{,4}', i)
         if len(t_med) > 0:
-            bull.at[index, "t ср"] = t_med[0][-4:]
+            bull.at[index, "t ср"] = replace_sign(t_med[0][-4:])
         wind_d = re.findall('15:00.+\s53\w{,3}', i)
         if len(wind_d) > 0:
             bull.at[index, "ветер д"] = wind_d[0][-2:]
@@ -49,9 +54,9 @@ for i in telegrams:
             bull.at[index, "ос ночь"] = prec_n[0][-4:-1]
         t_gr = re.findall('333\s\w+\s31\w{,3}|333\s\w+\s30\w{,3}', i)
         if len(t_gr) > 0:
-            bull.at[index, "t почвы"] = t_gr[0][-3:]
+            bull.at[index, "t почвы"] = replace_sign(t_gr[0][-3:])
         cm = re.findall('555\s52\w{,3}', i)
         if len(cm) > 0:
-            bull.at[index, "t 2cm"] = cm[0][-3:]
+            bull.at[index, "t 2cm"] = replace_sign(cm[0][-3:])
             
 bull.to_html("bull.html")
