@@ -20,7 +20,7 @@ indexes = ['Ветлуга', 'Шахунья', 'Красные Баки', 'Во�
 'Нижний Новгород', 'Нижний Новгород (АМСГ)', 'Лысково', 'Павлово', 'Выкса', 'Дальнее Константиново', 'Арзамас', \
 'Сергач', 'Лукоянов', 'Большое Болдино']
 
-bull = pd.DataFrame(columns=["t max","t min","t ср", "ос день", "ос ночь", "ветер д", "ветер н", "t почвы", "t 2cm"], index=indexes)
+bull = pd.DataFrame(columns=["t max","t min","t ср", "ос день", "ос ночь", "ос сум", "ветер д", "ветер н", "t почвы", "t 2cm"], index=indexes)
 
 def replace_sign(t):
     t = re.sub('^00|^0', '+' ,t)
@@ -48,10 +48,10 @@ for i in telegrams:
             bull.at[index, "ветер н"] = wind_n[0][-2:]
         prec_d = re.findall('15:00.+\s6\w{,3}2', i)
         if len(prec_d) > 0:
-            bull.at[index, "ос день"] = prec_d[0][-4:-1]
+            bull.at[index, "ос день"] = re.sub('^99', '0.' ,prec_d[0][-4:-1])
         prec_n = re.findall('03:00.+\s6\w{,3}2', i)
         if len(prec_n) > 0:
-            bull.at[index, "ос ночь"] = prec_n[0][-4:-1]
+            bull.at[index, "ос ночь"] = re.sub('^99', '0.' ,prec_n[0][-4:-1])
         t_gr = re.findall('333\s\w+\s31\w{,3}|333\s\w+\s30\w{,3}', i)
         if len(t_gr) > 0:
             bull.at[index, "t почвы"] = replace_sign(t_gr[0][-3:])
@@ -59,4 +59,17 @@ for i in telegrams:
         if len(cm) > 0:
             bull.at[index, "t 2cm"] = replace_sign(cm[0][-3:])
             
+for i in bull.columns:
+    bull[i] = bull[i].astype(float)
+
+bull.fillna(888, inplace=True)    
+bull['t max'] = bull['t max']/10
+bull['t min'] = bull['t min']/10
+bull['t ср'] = bull['t ср']/10
+bull['ос сум'] = bull['ос день'] + bull['ос ночь']
+bull["ветер д"] = bull["ветер д"].astype(int)
+bull["ветер н"] = bull["ветер н"].astype(int)
+bull["t почвы"] = bull["t почвы"].astype(int)
+bull["t 2cm"] = bull["t 2cm"].astype(int)
+bull.replace(888, '-', inplace=True)
 bull.to_html("bull.html")
