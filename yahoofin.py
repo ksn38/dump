@@ -20,7 +20,8 @@ def ticks(*args):
             
         response = requests.get(url, headers=headers).text
         parsed_html = bs(response, 'lxml')
-        t = parsed_html.find('fin-streamer', {'class': 'livePrice yf-mgkamr'}).text.replace(',', '')
+        #print(parsed_html)
+        t = parsed_html.find('fin-streamer', {'class': 'livePrice yf-1i5aalm'}).text.replace(',', '')
         print(t)
         f = open("gspc.txt", "w", encoding="utf-8")
         f.write(response)
