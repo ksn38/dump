@@ -16,9 +16,11 @@ def mave(*args):
         l3 = re.findall('[А-я]+?[^{}]+?\d{4}-\d{2}-\d{2}', str(response))
 
         for j in l3:
-            title.append(re.findall('^.+?,\"', j)[0][:-3])
-            date.append(j[-10:])
-            url.append(i)
+            t = re.findall('^.+?,\"', j)[0][:-3]
+            if len(t) < 1000:
+                title.append(t)
+                date.append(j[-10:])
+                url.append(i)
             
 def podbean(*args):
     for i in args:
@@ -42,4 +44,4 @@ podbean('https://learnpython.podbean.com/', 'https://podcast.itbeard.com/', 'htt
         'https://www.podbean.com/podcast-detail/g574s-69566/Цитаты-Свободы-Podcast', \
         'https://www.podbean.com/podcast-detail/832bf-5fab8/Newочём-Podcast')
 df = pd.DataFrame({"title": title, "date": date, "url": url}).sort_values('date', ascending=False)
-df.head(30).to_html("podcasts.html", encoding="utf-8", render_links=True)
+df.head(30).to_html("podcasts.html", encoding="utf-8", index=False, render_links=True)
