@@ -8,7 +8,7 @@ import re
 urli = 'https://finance.yahoo.com/markets/world-indices/'
 urlt = 'https://finance.yahoo.com/markets/bonds/'
 regi = '\" data-field=\"regularMarketPrice\" data-trend=\"none\" data-pricehint=\"2\" data-value=\"\d*\.\d*\" active'
-regt = '\" data-field=\"regularMarketChangePercent\" data-trend=\"txt\" data-pricehint=\"4\" data-value=\"\d*\.\d*\" data-tstyle=\"default\"'
+regt = '\" data-field=\"regularMarketPrice\" data-trend=\"none\" data-pricehint=\"4\" data-value=\"\d*\.\d*\" active'
         
 def ticks(url, reg, *args):
     headers = {
