@@ -1,6 +1,9 @@
 import requests
 import re
 import pandas as pd
+import webbrowser
+import os
+
 
 title = []
 date = []
@@ -11,19 +14,30 @@ headers = {
 
 def mave(*args):
     for i in args:
+        print(i)
         response = requests.get(i, headers=headers).text
 
-        l3 = re.findall('[А-я]+?[^{}]+?\d{4}-\d{2}-\d{2}', str(response))
+        l3 = re.findall('[А-я]+.+?\d{4}-\d{2}-\d{2}', str(response))
 
         for j in l3:
             t = re.findall('^.+?,\"', j)[0][:-3]
             if len(t) < 1000:
-                title.append(t)
-                date.append(j[-10:])
-                url.append(i)
+                if t[:7] == 'Подкаст':
+                    t = re.findall('listenings.+', j)
+                    t = re.findall(',\"[А-я].+?\"', str(t))
+                    
+                    if len(t) > 0:
+                        title.append(t[0][2:-1])
+                        date.append(j[-10:])
+                        url.append(i)
+                else:
+                    title.append(t)
+                    date.append(j[-10:])
+                    url.append(i)
             
 def podbean(*args):
     for i in args:
+        print(i)
         response = requests.get(i, headers=headers).text
 
         l3 = re.findall('name\":\"[^\"]+?\",\"datePublished\":\"\d{4}-\d{2}-\d{2}', str(response))
@@ -45,3 +59,6 @@ podbean('https://learnpython.podbean.com/', 'https://podcast.itbeard.com/', 'htt
         'https://www.podbean.com/podcast-detail/832bf-5fab8/Newочём-Podcast')
 df = pd.DataFrame({"title": title, "date": date, "url": url}).sort_values('date', ascending=False)
 df.head(30).to_html("podcasts.html", encoding="utf-8", index=False, render_links=True)
+
+if os.name == "posix":
+    webbrowser.open('/home/ksn38/dump/podcasts.html')
