@@ -7,22 +7,24 @@ import re
 
 urli = 'https://finance.yahoo.com/markets/world-indices/'
 urlt = 'https://finance.yahoo.com/markets/bonds/'
-regi = '\" data-field=\"regularMarketPrice\" data-trend=\"none\" data-pricehint=\"2\" data-value=\"\d*\.\d*\" active'
-regt = '\" data-field=\"regularMarketPrice\" data-trend=\"none\" data-pricehint=\"4\" data-value=\"\d*\.\d*\" active'
         
-def ticks(url, reg, *args):
+def ticks(url, *args):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.132 Safari/537.36'}
+    reg = '\" data-field=\"regularMarketPrice\" data-trend=\"none\" data-pricehint=\"\d\" data-value=\"\d*\.*\d*\" active'
     
     d = dict()
     response = requests.get(url, headers=headers).text
+    f = open("test.txt", "w")
+    f.write(response)
 
     for i in (args):
         x = re.findall(i + reg, response)
+        print(x)
         if i != '000001.SS':
-            d[str.lower(i)] = float(re.findall('\d+\.\d+', str(x))[0])
+            d[str.lower(i)] = float(re.findall('\d+\.*\d*', str(x))[-1])
         else:
-            d['ss'] = float(re.findall('\d+\.\d+', str(x))[0])
+            d['ss'] = float(re.findall('\d+\.*\d*', str(x))[-1])
 
     return d
 
@@ -47,7 +49,7 @@ def trec():
     return d
     
 t_dict = dict()    
-t_dict.update(ticks(urli, regi, 'GSPC', 'IXIC', 'RUT', 'VIX', 'GDAXI', 'BVSP', '000001.SS', 'BSESN'))
-t_dict.update(ticks(urlt, regt, 'TNX'))
+t_dict.update(ticks(urli, 'GSPC', 'IXIC', 'RUT', 'VIX', 'BVSP', '000001.SS', 'BSESN', 'GDAXI'))
+t_dict.update(ticks(urlt, 'TNX'))
 t_dict.update(trec())
 print(t_dict)

@@ -60,5 +60,4 @@ podbean('https://learnpython.podbean.com/', 'https://podcast.itbeard.com/', 'htt
 df = pd.DataFrame({"title": title, "date": date, "url": url}).sort_values('date', ascending=False)
 df.head(30).to_html("podcasts.html", encoding="utf-8", index=False, render_links=True)
 
-if os.name == "posix":
-    webbrowser.open('/home/ksn38/dump/podcasts.html')
+webbrowser.open('podcasts.html')
