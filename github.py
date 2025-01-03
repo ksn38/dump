@@ -36,5 +36,5 @@ for i in unfollow:
         print('-', i)
 
 for i in follow:
-	if i != "anaselgarhy":
+	if i not in {"anaselgarhy", "mowhn"}:
 		print('+', i)
