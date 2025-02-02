@@ -20,7 +20,7 @@ indexes = ['Ветлуга', 'Шахунья', 'Красные Баки', 'Во�
 'Нижний Новгород', 'Нижний Новгород (АМСГ)', 'Лысково', 'Павлово', 'Выкса', 'Дальнее Константиново', 'Арзамас', \
 'Сергач', 'Лукоянов', 'Большое Болдино']
 
-bull = pd.DataFrame(columns=["t max","t min","t ср", "ос день", "ос ночь", "ос сум", "ветер д", "ветер н", "t почвы", "t 2cm"], index=indexes)
+bull = pd.DataFrame(columns=["t max","t min","t ср", "ос день", "ос ночь", "ос сум", "ветер д", "ветер н", "t почвы", "t 2cm", "h снега"], index=indexes)
 
 def replace_sign(t):
     t = re.sub('^00|^0', '+' ,t)
@@ -58,6 +58,9 @@ for i in telegrams:
         cm = re.findall('555\s52\w{,3}', i)
         if len(cm) > 0:
             bull.at[index, "t 2cm"] = replace_sign(cm[0][-3:])
+        h_snow = re.findall('\s(42\w{,3}|43\w{,3})', i)
+        if len(h_snow) > 0:
+            bull.at[index, "h снега"] = h_snow[0][-3:]
             
 for i in bull.columns:
     bull[i] = bull[i].astype(float)
@@ -71,5 +74,6 @@ bull["ветер д"] = bull["ветер д"].astype(int)
 bull["ветер н"] = bull["ветер н"].astype(int)
 bull["t почвы"] = bull["t почвы"].astype(int)
 bull["t 2cm"] = bull["t 2cm"].astype(int)
+bull["h снега"] = bull["h снега"].astype(int)
 bull.replace(888, '-', inplace=True)
 bull.to_html("bull.html")

@@ -17,7 +17,7 @@ def mave(*args):
         print(i)
         response = requests.get(i, headers=headers).text
 
-        l3 = re.findall('[А-я]+.+?\d{4}-\d{2}-\d{2}', str(response))
+        l3 = re.findall(r'[А-я]+.+?\d{4}-\d{2}-\d{2}', str(response))
 
         for j in l3:
             t = re.findall('^.+?,\"', j)[0][:-3]
@@ -40,7 +40,7 @@ def podbean(*args):
         print(i)
         response = requests.get(i, headers=headers).text
 
-        l3 = re.findall('name\":\"[^\"]+?\",\"datePublished\":\"\d{4}-\d{2}-\d{2}', str(response))
+        l3 = re.findall(r'name\":\"[^\"]+?\",\"datePublished\":\"\d{4}-\d{2}-\d{2}', str(response))
 
         for j in l3:
             if j[7] == '\\':
@@ -56,7 +56,8 @@ podbean('https://learnpython.podbean.com/', 'https://podcast.itbeard.com/', 'htt
         'https://www.podbean.com/podcast-detail/4u7eq-182c10/The-Rachman-Review-Podcast', \
         'https://www.podbean.com/podcast-detail/2dcw3-5d2c8/Археология-Podcast', \
         'https://www.podbean.com/podcast-detail/g574s-69566/Цитаты-Свободы-Podcast', \
-        'https://www.podbean.com/podcast-detail/832bf-5fab8/Newочём-Podcast')
+        'https://www.podbean.com/podcast-detail/832bf-5fab8/Newочём-Podcast', \
+        'https://www.podbean.com/podcast-detail/qcij9-31b241/Берлинский-центр-Карнеги-|-Аудио-Podcast')
 df = pd.DataFrame({"title": title, "date": date, "url": url}).sort_values('date', ascending=False)
 df.head(30).to_html("podcasts.html", encoding="utf-8", index=False, render_links=True)
 
